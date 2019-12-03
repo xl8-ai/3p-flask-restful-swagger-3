@@ -91,6 +91,9 @@ class Api(restful_Api):
         if self.app and not self._swagger_object['info']['title']:
             self._swagger_object['info']['title'] = self.app.name
 
+        if api_version:
+            self._swagger_object['info']['version'] = api_version
+
         # Unless told otherwise, create and register the swagger endpoint
         if add_api_spec_resource:
             api_spec_urls = [

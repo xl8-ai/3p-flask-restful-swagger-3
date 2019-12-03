@@ -60,6 +60,7 @@ def set_nested(d, key_spec, value):
     :param value: The value to set
     """
     keys = key_spec.split('.')
+    print(keys)
 
     for key in keys[:-1]:
         d = d.setdefault(key, {})
