@@ -1,7 +1,7 @@
 from flask import request
 from flask_restful.reqparse import RequestParser
 
-from flask_restful_swagger_2 import swagger, Resource
+from flask_restful_swagger_3 import swagger, Resource
 
 from models import UserModel, ErrorModel
 
@@ -17,7 +17,7 @@ class UserResource(Resource):
             {
                 'name': 'body',
                 'description': 'Request body',
-                'in': 'body',
+                'in': 'query',
                 'schema': UserModel,
                 'required': True,
             }
@@ -25,16 +25,20 @@ class UserResource(Resource):
         'responses': {
             '201': {
                 'description': 'Created user',
-                'schema': UserModel,
-                'headers': {
-                    'Location': {
-                        'type': 'string',
-                        'description': 'Location of the new item'
-                    }
-                },
-                'examples': {
+                'content': {
                     'application/json': {
-                        'id': 1
+                        'schema': UserModel,
+                        'description': 'Location of the new item',
+                        'headers': {
+                            'schema': {
+                                'type': 'string'
+                            }
+                        },
+                        'examples': {
+                            'application/json': {
+                                'id': 1
+                            }
+                        }
                     }
                 }
             }
@@ -63,21 +67,27 @@ class UserResource(Resource):
             {
                 'name': 'name',
                 'description': 'Name to filter by',
-                'type': 'string',
+                'schema': {
+                    'type': 'string',
+                },
                 'in': 'query'
             }
         ],
         'responses': {
             '200': {
                 'description': 'List of users',
-                'schema': UserModel,
-                'examples': {
-                    'application/json': [
-                        {
-                            'id': 1,
-                            'name': 'somebody'
+                'content': {
+                    'application/json': {
+                        'schema': UserModel,
+                        'examples': {
+                            'application/json': [
+                                {
+                                    'id': 1,
+                                    'name': 'somebody'
+                                }
+                            ]
                         }
-                    ]
+                    }
                 }
             }
         }
@@ -95,7 +105,7 @@ class UserResource(Resource):
                  if 'name' in args else known_users)
 
         # Return data through schema model
-        return map(lambda user: UserModel(**user), users), 200
+        return list(map(lambda user: UserModel(**user), users)), 200
 
 
 class UserItemResource(Resource):
@@ -107,17 +117,23 @@ class UserItemResource(Resource):
                 'name': 'user_id',
                 'description': 'User identifier',
                 'in': 'path',
-                'type': 'integer'
+                'schema': {
+                    'type': 'integer'
+                }
             }
         ],
         'responses': {
             '200': {
                 'description': 'User',
-                'schema': UserModel,
-                'examples': {
+                'content': {
                     'application/json': {
-                        'id': 1,
-                        'name': 'somebody'
+                        'schema': UserModel,
+                        'examples': {
+                            'application/json': {
+                                'id': 1,
+                                'name': 'somebody'
+                            }
+                        }
                     }
                 }
             }
@@ -152,9 +168,13 @@ class GroupResource(Resource):
         'responses': {
             '201': {
                 'description': 'Created group',
-                'examples': {
+                'content': {
                     'application/json': {
-                        'id': 1
+                        'examples': {
+                            'application/json': {
+                                'id': 1
+                            }
+                        }
                     }
                 }
             }

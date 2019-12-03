@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from flask_restful_swagger_2 import Api, swagger, Resource
+from flask_restful_swagger_3 import Api, swagger, Resource
 
 from models import UserModel, ErrorModel
 
@@ -15,7 +15,7 @@ class UserResource(Resource):
             {
                 'name': 'body',
                 'description': 'Request body',
-                'in': 'body',
+                'in': 'query',
                 'schema': UserModel,
                 'required': True,
             }
@@ -23,16 +23,20 @@ class UserResource(Resource):
         'responses': {
             '201': {
                 'description': 'Created user',
-                'schema': UserModel,
                 'headers': {
-                    'Location': {
-                        'type': 'string',
-                        'description': 'Location of the new item'
-                    }
+                    # 'Location': {
+                    #     'type': 'string',
+                    #     'description': 'Location of the new item'
+                    # }
                 },
-                'examples': {
+                'content': {
                     'application/json': {
-                        'id': 1
+                        'schema': UserModel,
+                        'examples': {
+                            'application/json': {
+                                'id': 1
+                            }
+                        }
                     }
                 }
             }
@@ -57,70 +61,67 @@ class UserResource(Resource):
     @swagger.doc({
         'tags': ['users'],
         'description': 'Returns all users',
-        'parameters': [
-            {
-                'name': 'name',
-                'description': 'Name to filter by',
-                'type': 'string',
-                'in': 'query'
-            }
-        ],
         'responses': {
             '200': {
                 'description': 'List of users',
-                'schema': UserModel,
-                'examples': {
-                    'application/json': [
-                        {
-                            'id': 1,
-                            'name': 'somebody'
+                'content': {
+                    'application/json': {
+                        'schema': UserModel,
+                        'examples': {
+                            'application/json': [
+                                {
+                                    'id': 1,
+                                    'name': 'somebody'
+                                }
+                            ]
                         }
-                    ]
+                    }
                 }
             }
         }
     })
-    def get(self, _parser):
+    def get(self):
         """
         Returns all users.
         :param _parser: Query parameter parser
         """
         # swagger.doc decorator returns a query parameter parser in the special
         # '_parser' function argument if it is present
-        args = _parser.parse_args()
+        # args = _parser.parse_args()
 
-        users = ([u for u in known_users if u['name'] == args['name']]
-                 if 'name' in args else known_users)
+        # users = ([u for u in known_users if u['name'] == args['name']]
+        #          if 'name' in args else known_users)
 
         # Return data through schema model
-        return map(lambda user: UserModel(**user), users), 200
+        # return map(lambda user: UserModel(**user), users), 200
+        return "success"
 
 
 class UserItemResource(Resource):
-    @swagger.doc({
-        'tags': ['user'],
-        'description': 'Returns a user',
-        'parameters': [
-            {
-                'name': 'user_id',
-                'description': 'User identifier',
-                'in': 'path',
-                'type': 'integer'
-            }
-        ],
-        'responses': {
-            '200': {
-                'description': 'User',
-                'schema': UserModel,
-                'examples': {
-                    'application/json': {
-                        'id': 1,
-                        'name': 'somebody'
-                    }
-                }
-            }
-        }
-     })
+    # @swagger.doc({
+    #     'tags': ['user'],
+    #     'description': 'Returns a user',
+    #     'parameters': [
+    #         {
+    #             'name': 'user_id',
+    #             'description': 'User identifier',
+    #             'in': 'path',
+    #             'type': 'integer'
+    #         }
+    #     ],
+    #     'responses': {
+    #         '200': {
+    #             'description': 'User',
+    #             'schema': UserModel,
+    #             'examples': {
+    #                 'application/json': {
+    #                     'id': 1,
+    #                     'name': 'somebody'
+    #                 }
+    #             }
+    #         }
+    #     }
+    #  })
     def get(self, user_id):
         """
         Returns a specific user.

@@ -2,9 +2,10 @@
 
 # NOTE: Run with PYTHONPATH=. python example/app.py
 
-from flask import Flask
+from flask import Flask, current_app
 from flask_cors import CORS
-from flask_restful_swagger_2 import swagger, get_swagger_blueprint
+from flask_restful_swagger_3 import swagger, get_swagger_blueprint
+# from swagger_ui import api_doc
 
 from views_blueprint import get_user_resources
 
@@ -32,7 +33,7 @@ docs.append(user_resources.get_swagger_doc())
 app.register_blueprint(user_resources.blueprint)
 
 # Prepare a blueprint to server the combined list of swagger document objects and register it
-app.register_blueprint(get_swagger_blueprint(docs, '/api/swagger', title='Example', api_version='1'))
+app.register_blueprint(get_swagger_blueprint(docs, "/api/swagger", title='Example', version='1'))
 
 
 @app.route('/')
