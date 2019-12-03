@@ -2,8 +2,8 @@ import unittest
 
 from flask_restful import inputs
 
-import flask_restful_swagger_2.swagger as swagger
-from flask_restful_swagger_2 import Schema
+import flask_restful_swagger_3.swagger as swagger
+from flask_restful_swagger_3 import Schema
 
 
 class TestModel(Schema):
@@ -20,32 +20,33 @@ class TestModel(Schema):
 
 class SwaggerTestCase(unittest.TestCase):
     def test_should_set_nested(self):
-        d = {'swagger': '2.0'}
+        d = {'openapi': '3.0.0'}
         swagger.set_nested(d, 'info.title', 'API')
-        self.assertEqual(d, {'swagger': '2.0', 'info': {'title': 'API'}})
+        self.assertEqual(d, {'openapi': '3.0.0', 'info': {'title': 'API'}})
 
     def test_should_get_data_type_str(self):
-        self.assertEqual(swagger.get_data_type({'type': 'string'}), str)
+        self.assertEqual(swagger.get_data_type({'schema': {'type': 'string'}}), str)
 
     def test_should_get_data_type_str_date(self):
-        self.assertEqual(swagger.get_data_type({'type': 'string', 'format': 'date'}),
+        self.assertEqual(swagger.get_data_type({'schema': {'type': 'string', 'format': 'date'}}),
                          inputs.date)
 
     def test_should_get_data_type_str_date_time(self):
-        self.assertEqual(swagger.get_data_type({'type': 'string', 'format': 'date-time'}),
+        self.assertEqual(swagger.get_data_type({'schema': {'type': 'string', 'format': 'date-time'}}),
                          inputs.datetime_from_iso8601)
 
     def test_should_get_data_type_int(self):
-        self.assertEqual(swagger.get_data_type({'type': 'integer'}), int)
+        self.assertEqual(swagger.get_data_type({'schema': {'type': 'integer'}}), int)
 
     def test_should_get_data_type_bool(self):
-        self.assertEqual(swagger.get_data_type({'type': 'boolean'}), inputs.boolean)
+        self.assertEqual(swagger.get_data_type({'schema': {'type': 'boolean'}}), inputs.boolean)
 
     def test_should_get_data_type_float(self):
-        self.assertEqual(swagger.get_data_type({'type': 'number', 'format': 'float'}), float)
+        self.assertEqual(swagger.get_data_type({'schema': {'type': 'number', 'format': 'float'}}), float)
 
     def test_should_get_data_type_double(self):
-        self.assertEqual(swagger.get_data_type({'type': 'number', 'format': 'double'}), float)
+        print(swagger.get_data_type({'schema': {'type': 'number', 'format': 'double'}}))
+        self.assertEqual(swagger.get_data_type({'schema': {'type': 'number', 'format': 'double'}}), float)
 
     def test_should_get_data_type_invalid(self):
         self.assertEqual(swagger.get_data_type({}), None)
@@ -54,7 +55,9 @@ class SwaggerTestCase(unittest.TestCase):
         param = {
             'name': 'name',
             'description': 'Name to filter by',
-            'type': 'string',
+            'schema': {
+                'type': 'string',
+            },
             'in': 'query'
         }
 
@@ -75,13 +78,15 @@ class SwaggerTestCase(unittest.TestCase):
             {
                 'name': 'body',
                 'description': 'Request body',
-                'in': 'body',
+                'in': 'path',
                 'required': True,
             },
             {
                 'name': 'name',
                 'description': 'Name to filter by',
-                'type': 'string',
+                'schema': {
+                    'type': 'string'
+                },
                 'in': 'query'
             }
         ]
@@ -103,15 +108,17 @@ class SwaggerTestCase(unittest.TestCase):
             {
                 'name': 'body',
                 'description': 'Request body',
-                'in': 'body',
+                'in': 'path',
                 'required': True,
             },
             {
                 'name': 'name',
                 'description': 'Name to filter by',
-                'type': 'array',
-                'items': {
-                    'type': 'string'
+                'schema': {
+                    'type': 'array',
+                    'items': {
+                        'type': 'string'
+                    },
                 },
                 'in': 'query'
             }
@@ -201,7 +208,6 @@ class SwaggerTestCase(unittest.TestCase):
 
     def test_should_validate_parameter_object_no_type_field(self):
         obj = {
-            'name': 'name',
             'description': 'Name to filter by',
             'in': 'query'
         }

@@ -1,6 +1,6 @@
 import unittest
 
-from flask_restful_swagger_2 import Schema
+from flask_restful_swagger_3 import Schema
 
 
 class TestModel(Schema):

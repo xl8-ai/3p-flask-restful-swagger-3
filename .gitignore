@@ -38,3 +38,6 @@ nosetests.xml
 
 *.iml
 .idea/
+
+# venv
+env

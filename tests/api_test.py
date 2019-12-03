@@ -4,7 +4,7 @@ import json
 from flask import Flask
 from flask_restful.reqparse import RequestParser
 
-from flask_restful_swagger_2 import Api, Resource, Schema, swagger
+from flask_restful_swagger_3 import Api, Resource, Schema, swagger
 
 
 class UserModel(Schema):
@@ -30,40 +30,52 @@ class ParseResource(Resource):
                 'name': 'str',
                 'description': 'String value',
                 'in': 'query',
-                'type': 'string'
+                'schema': {
+                    'type': 'string'
+                }
             },
             {
                 'name': 'date',
                 'description': 'Date value',
                 'in': 'query',
-                'type': 'string',
-                'format': 'date'
+                'schema': {
+                    'type': 'string',
+                    'format': 'date'
+                }
             },
             {
                 'name': 'datetime',
                 'description': 'Date-time value',
                 'in': 'query',
-                'type': 'string',
-                'format': 'date-time'
+                'schema': {
+                    'type': 'string',
+                    'format': 'date-time'
+                }
             },
             {
                 'name': 'bool',
                 'description': 'Boolean value',
                 'in': 'query',
-                'type': 'boolean'
+                'schema': {
+                    'type': 'boolean'
+                }
             },
             {
                 'name': 'int',
                 'description': 'Integer value',
                 'in': 'query',
-                'type': 'integer'
+                'schema': {
+                    'type': 'integer'
+                }
             },
             {
                 'name': 'float',
                 'description': 'Float value',
                 'in': 'query',
-                'type': 'number',
-                'format': 'float'
+                'schema': {
+                    'type': 'number',
+                    'format': 'float'
+                }
             }
         ],
         'responses': {
@@ -98,23 +110,31 @@ class UserResource(Resource):
                 'name': 'user_id',
                 'description': 'User identifier',
                 'in': 'path',
-                'type': 'integer'
+                'schema': {
+                    'type': 'integer'
+                }
             },
             {
                 'name': 'name',
                 'description': 'User name',
                 'in': 'query',
-                'type': 'string'
+                'schema': {
+                    'type': 'string'
+                }
             }
         ],
         'responses': {
             '200': {
-                'description': 'User',
-                'schema': UserModel,
-                'examples': {
+                'description': 'Get users',
+                'content': {
                     'application/json': {
-                        'id': 1,
-                        'name': 'somebody'
+                        'schema': UserModel,
+                        'examples': {
+                            'application/json': {
+                                'id': 1,
+                                'name': 'somebody'
+                            }
+                        }
                     }
                 }
             }
@@ -152,9 +172,13 @@ class EntityAddResource(Resource):
         'responses': {
             '200': {
                 'description': 'User',
-                'examples': {
+                'content': {
                     'application/json': {
-                        'id': 1,
+                        'examples': {
+                            'application/json': {
+                                'id': 1,
+                            }
+                        }
                     }
                 }
             }
@@ -185,8 +209,7 @@ class ApiTestCase(unittest.TestCase):
             spec = self.api.get_swagger_doc()
             self.assertTrue('info' in spec)
             self.assertTrue('paths' in spec)
-            self.assertTrue('definitions' in spec)
-            self.assertEqual(spec['swagger'], '2.0')
+            self.assertEqual(spec['openapi'], '3.0.0')
 
     def test_get_spec(self):
         # Retrieve spec
@@ -196,8 +219,7 @@ class ApiTestCase(unittest.TestCase):
         data = json.loads(r.data.decode('utf-8'))
         self.assertTrue('info' in data)
         self.assertTrue('paths' in data)
-        self.assertTrue('definitions' in data)
-        self.assertEqual(data['swagger'], '2.0')
+        self.assertEqual(data['openapi'], '3.0.0')
 
     def test_parse_query_parameters(self):
         r = self.app.get('/parse?str=Test' +
@@ -241,11 +263,11 @@ class TestFlaskSwaggerRequestParser(unittest.TestCase):
         self.assertEqual(r.status_code, 200)
 
         data = json.loads(r.data.decode('utf-8'))
-        self.assertIn('definitions', data)
-        self.assertIn('EntityAddParser', data['definitions'])
-        self.assertEqual(data['definitions']['EntityAddParser']['type'], 'object')
+        self.assertIn('responses', data['paths']["/entities/"]["post"])
+        self.assertIn('EntityAddParser', data['components']['schemas'])
+        self.assertEqual(data['components']['schemas']['EntityAddParser']['type'], 'object')
 
-        properties = data['definitions']['EntityAddParser']['properties']
+        properties = data['components']['schemas']['EntityAddParser']['properties']
         id_prop = properties.get('id')
         self.assertIsNotNone(id_prop)
         self.assertNotIn('default', id_prop)
@@ -274,7 +296,7 @@ class TestFlaskSwaggerRequestParser(unittest.TestCase):
         self.assertIsNotNone(val_prop)
         self.assertEqual(val_prop['default'], 1.1)
         self.assertFalse(val_prop['required'])
-        self.assertEqual(val_prop['type'], 'float')
+        self.assertEqual(val_prop['type'], 'number')
         self.assertEqual(val_prop['name'], 'value')
         self.assertIsNone(val_prop['description'])
 
