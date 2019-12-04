@@ -7,7 +7,7 @@ variables:
   IMAGE: python3.7-alpine
 
 before_script:
-  - pip install --upgrade setuptools wheel twine
+  - python3 -m pip install --upgrade setuptools wheel twine
   - python setup.py sdsit
 
 deploy-staging:
