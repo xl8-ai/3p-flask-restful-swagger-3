@@ -1,10 +1,10 @@
-image: python:3.7.4-alpine
+image: python:3.6-alpine
 
 stages:
   - deploy
 
 before_script:
-  - apk --no-cache add --virtual build-deps gcc python-dev musl-dev
+  - apk --no-cache add --virtual gcc
   - pip install --upgrade pip setuptools wheel twine
   - python setup.py sdsit
 
