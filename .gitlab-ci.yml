@@ -4,12 +4,13 @@ stages:
   - test
 
 before_script:
-#  - apk add --virtual build-deps gcc python-dev musl-dev
-#  - apk add build-essential libssl-dev libffi-dev python-dev
-  - apk add --update alpine-sdk
+  - apk add --virtual build-deps gcc python-dev musl-dev
+  # - apk add build-essential libssl-dev libffi-dev python-dev
+  # - apk add --update alpine-sdk
   - python3 -m pip install --upgrade pip
   # - pip install setuptools wheel
-  - pip install twine
+  - pip install cryptography
+  # - pip install twine
   - python setup.py sdist
 
 
