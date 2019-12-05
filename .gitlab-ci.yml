@@ -5,7 +5,7 @@ stages:
 
 before_script:
   - apk add --virtual build-deps gcc python-dev musl-dev
-  # - apk add build-essential libssl-dev libffi-dev python-dev
+  - apt-get install build-essential libssl-dev libffi-dev python-dev
   # - apk add --update alpine-sdk
   - python3 -m pip install --upgrade pip
   # - pip install setuptools wheel
