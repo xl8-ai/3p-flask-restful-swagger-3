@@ -6,7 +6,7 @@ stages:
 before_script:
   - apk add --virtual build-deps gcc python-dev musl-dev
   - python3 -m pip install --upgrade pip
-  # - python3 -m pip install setuptools wheel twine
+  - pip install setuptools # wheel twine
   - python setup.py sdist
 
 
