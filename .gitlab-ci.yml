@@ -4,6 +4,7 @@ stages:
   - deploy
 
 before_script:
+  - apk --no-cache add  gcc
   - pip install --upgrade pip setuptools wheel twine
   - python setup.py sdsit
 
