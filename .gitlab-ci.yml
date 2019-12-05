@@ -1,4 +1,4 @@
-image: python3.7-alpine
+image: "python3.7-alpine"
 
 stages:
   - deploy
