@@ -4,7 +4,7 @@ stages:
   - test
 
 before_script:
-  - apk --no-cache add --virtual gcc
+  - apk add gcc
   - python3 -m pip install --upgrade pip setuptools wheel twine
   - python setup.py sdist
 
