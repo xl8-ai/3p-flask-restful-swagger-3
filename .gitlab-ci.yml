@@ -4,7 +4,7 @@ stages:
   - test
 
 before_script:
-  - apk add build-deps gcc python-dev musl-dev
+  - apk add --virtual build-deps gcc python-dev musl-dev
   - python3 -m pip install --upgrade pip setuptools wheel twine
   - python setup.py sdist
 
