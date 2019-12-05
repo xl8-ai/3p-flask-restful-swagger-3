@@ -4,7 +4,7 @@ stages:
   - deploy
 
 before_script:
-  - apk --no-cache add  gcc
+  - apk --no-cache add --virtual build-deps gcc python-dev musl-dev
   - pip install --upgrade pip setuptools wheel twine
   - python setup.py sdsit
 
