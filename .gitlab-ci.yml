@@ -1,11 +1,11 @@
-image: python:3.7.4-alpine
+image: python:3.7.4-stretch
 
 stages:
   - test
 
 before_script:
-  - apk add --virtual build-deps gcc python-dev musl-dev
-  - apk add --no-cache py3-cryptography # build-base # libssl-dev libffi-dev python-dev
+  # - apk add --virtual build-deps gcc python-dev musl-dev
+  # - apk add --no-cache py3-cryptography # build-base # libssl-dev libffi-dev python-dev
   # - apk add --update alpine-sdk
   - python3 -m pip install --upgrade pip
   # - pip install setuptools wheel
