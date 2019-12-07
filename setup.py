@@ -19,7 +19,7 @@ setup(name='flask-restful-swagger-3',
                   ' Project based on flask-restful-swagger-2 by Soeren Wegener.',
       author='Jonathan ULLINDAH',
       license='MIT',
-      long_description=read('README.md'),
+      long_description=read('README.rst'),
       install_requires=['Flask-RESTful>=0.3.7'],
       tests_require=['nose'],
       test_suite='nose.collector'
