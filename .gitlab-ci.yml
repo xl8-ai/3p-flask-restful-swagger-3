@@ -21,9 +21,10 @@ deploy-staging:
   variables:
     TWINE_USERNAME: $STAGING_USERNAME
     TWINE_PASSWORD: $STAGING_PASSWORD
+    TWINE_REPOSITORY_URL: $TEST_PYPI_REPOSITORY_URL
   script:
     - python setup.py sdist
-    - twine upload -u $TWINE_USERNAME -p $TWINE_PASSWORD --repository-url $TEST_PYPI_REPOSITORY_URL dist/*
+    - twine upload dist/*
   only:
     - develop
     - master
