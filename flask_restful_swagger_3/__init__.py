@@ -51,15 +51,8 @@ class Api(restful_Api):
                 'title': '',
                 'description': '',
                 'termsOfService': '',
-                'contact:': {
-                    "name": "",
-                    "url": "",
-                    "email": ""
-                },
-                'license': {
-                    "name": "",
-                    "url": ""
-                },
+                'contact': {},
+                'license': {},
                 'version': '0.0'
             },
             'servers': [],  # servers replace host, basePath and schemes
@@ -84,7 +77,8 @@ class Api(restful_Api):
 
         api_spec_url = kwargs.pop('api_spec_url', '/api/swagger')
         add_api_spec_resource = kwargs.pop('add_api_spec_resource', True)
-        api_version = kwargs.pop('api_version', None)
+        api_version = kwargs.pop('version', None)
+        servers = kwargs.pop('servers', None)
 
         super(Api, self).__init__(*args, **kwargs)
 
@@ -93,6 +87,9 @@ class Api(restful_Api):
 
         if api_version:
             self._swagger_object['info']['version'] = api_version
+
+        if servers:
+            self._swagger_object["servers"] = servers
 
         # Unless told otherwise, create and register the swagger endpoint
         if add_api_spec_resource:
@@ -107,7 +104,6 @@ class Api(restful_Api):
     def add_resource(self, resource, *urls, **kwargs):
         path_item = {}
         # definitions = {}
-        # No
         schemas = {}
 
         for method in [m.lower() for m in resource.methods]:
