@@ -24,10 +24,10 @@ class UserResource(Resource):
             '201': {
                 'description': 'Created user',
                 'headers': {
-                    # 'Location': {
-                    #     'type': 'string',
-                    #     'description': 'Location of the new item'
-                    # }
+                    'description': 'Location of the new item',
+                    'schema': {
+                        'type': 'string',
+                    }
                 },
                 'content': {
                     'application/json': {
@@ -98,30 +98,36 @@ class UserResource(Resource):
 
 
 class UserItemResource(Resource):
-    # @swagger.doc({
-    #     'tags': ['user'],
-    #     'description': 'Returns a user',
-    #     'parameters': [
-    #         {
-    #             'name': 'user_id',
-    #             'description': 'User identifier',
-    #             'in': 'path',
-    #             'type': 'integer'
-    #         }
-    #     ],
-    #     'responses': {
-    #         '200': {
-    #             'description': 'User',
-    #             'schema': UserModel,
-    #             'examples': {
-    #                 'application/json': {
-    #                     'id': 1,
-    #                     'name': 'somebody'
-    #                 }
-    #             }
-    #         }
-    #     }
-    #  })
+    @swagger.doc({
+        'tags': ['user'],
+        'description': 'Returns a user',
+        'parameters': [
+            {
+                'name': 'user_id',
+                'description': 'User identifier',
+                'in': 'path',
+                'schema': {
+                    'type': 'integer'
+                }
+            }
+        ],
+        'responses': {
+            '200': {
+                'description': 'User',
+                'content': {
+                    'application/json': {
+                        'schema': UserModel,
+                        'examples': {
+                            'application/json': {
+                                'id': 1,
+                                'name': 'somebody'
+                            }
+                        }
+                    }
+                }
+            }
+        }
+     })
     def get(self, user_id):
         """
         Returns a specific user.

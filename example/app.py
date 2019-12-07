@@ -10,7 +10,8 @@ from views import UserResource, UserItemResource, GroupResource
 
 app = Flask(__name__)
 CORS(app)
-api = Api(app, api_version='0.1')
+servers = [{"url": "http://localhost:5000"}]
+api = Api(app, version='5', servers=servers)
 
 
 def auth(api_key, endpoint, method):

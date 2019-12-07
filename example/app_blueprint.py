@@ -33,7 +33,9 @@ docs.append(user_resources.get_swagger_doc())
 app.register_blueprint(user_resources.blueprint)
 
 # Prepare a blueprint to server the combined list of swagger document objects and register it
-app.register_blueprint(get_swagger_blueprint(docs, "/api/swagger", title='Example', version='1'))
+servers = [{"url": "http://localhost:5000"}]
+
+app.register_blueprint(get_swagger_blueprint(docs, "/api/swagger", title='Example', version='1', servers=servers))
 
 
 @app.route('/')
