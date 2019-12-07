@@ -22,7 +22,7 @@ deploy-staging:
     TWINE_USERNAME: $STAGING_USERNAME
     TWINE_PASSWORD: $STAGING_PASSWORD
   script:
-    - twine upload --repository-url $TEST_PYPI_REPOSITORY_URL dist/*
+    - twine upload --verbose --repository-url $TEST_PYPI_REPOSITORY_URL dist/*
   only:
     - develop
     - master
