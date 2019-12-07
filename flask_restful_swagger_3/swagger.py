@@ -3,7 +3,6 @@ import re
 import inspect
 import copy
 from functools import wraps
-import json
 
 from flask import request
 from flask_restful import Resource, reqparse, inputs
@@ -47,6 +46,21 @@ def create_swagger_endpoint(swagger_object):
                         swagger_doc['paths'] = collections.OrderedDict(sorted(paths.items()))
                     else:
                         swagger_doc[k] = v
+
+                if k == 'servers':
+                    if isinstance(v, list):
+                        for server in v:
+                            validate_server_object(server)
+                            continue
+                    else:
+                        raise ValidationError('Invalid servers. must a list. See {url}'.format(
+                            field=k,
+                            url='http://swagger.io/specification/#infoObject'))
+
+                if k == 'info':
+                    validate_info_object(v)
+                    continue
+
             return swagger_doc
 
     return SwaggerEndpoint
@@ -60,7 +74,6 @@ def set_nested(d, key_spec, value):
     :param value: The value to set
     """
     keys = key_spec.split('.')
-    print(keys)
 
     for key in keys[:-1]:
         d = d.setdefault(key, {})
@@ -229,6 +242,57 @@ def doc(operation_object):
     return decorated
 
 
+def validate_info_object(info_object):
+    for k, v in info_object.items():
+        if k not in ['title', 'description', 'termsOfService', 'contact', 'license', 'version']:
+            raise ValidationError('Invalid info object. Unknown field "{field}". See {url}'.format(
+                field=k,
+                url='http://swagger.io/specification/#infoObject'))
+
+        if k == 'contact':
+            validate_contact_object(v)
+            continue
+
+        if k == 'license':
+            validate_license_object(v)
+            continue
+
+    if 'title' not in info_object:
+        raise ValidationError('Invalid info object. Missing field "title"')
+
+    if 'version' not in info_object:
+        raise ValidationError('Invalid info object. Missing field "version"')
+
+
+def validate_contact_object(contact_object):
+    if contact_object:
+        for k, v in contact_object.items():
+            if k not in ['name', 'url', 'email']:
+                raise ValidationError('Invalid contact object. Unknown field "{field}". See {url}'.format(
+                    field=k,
+                    url='http://swagger.io/specification/#contactObject'))
+
+            if k == 'email':
+                validate_email(v)
+                continue
+
+
+def validate_license_object(license_object):
+    if license_object:
+        for k, v in license_object.items():
+            if k not in ['name', 'url']:
+                raise ValidationError('Invalid license object. Unknown field "{field}". See {url}'.format(
+                    field=k,
+                    url='http://swagger.io/specification/#licenseObject'))
+
+            if k ==  'url':
+                validate_url(v)
+                continue
+
+        if 'name' not in license_object:
+            raise ValidationError('Invalid license object. Missing field "name"')
+
+
 def validate_path_item_object(path_item_object):
     """Checks if the passed object is valid according to http://swagger.io/specification/#pathItemObject"""
 
@@ -239,6 +303,7 @@ def validate_path_item_object(path_item_object):
             validate_operation_object(v)
             continue
         if k == 'servers':
+            validate_server_object(v)
             continue
         if k == 'parameters':
             for parameter in v:
@@ -451,18 +516,49 @@ def validate_link_object(link_object):
 
 
 def validate_server_object(server_object):
-    for k, v in server_object.items():
-        if k not in ['url', 'description', 'variables']:
-            raise ValidationError('Invalid server object. Unknown field "{field}". See {url}'.format(
-                field=k,
-                url='http://swagger.io/specification/#serverObject'))
+    if isinstance(server_object, dict):
+        for k, v in server_object.items():
+            if k not in ['url', 'description', 'variables']:
+                raise ValidationError('Invalid server object. Unknown field "{field}". See {url}'.format(
+                    field=k,
+                    url='http://swagger.io/specification/#serverObject'))
 
-        if k == 'variables':
-            validate_server_variables_object(v)
-            continue
+            if k == 'variables':
+                validate_server_variables_object(v)
+                continue
 
-    if "url" not in server_object:
-        raise ValidationError('Invalid parameter object. Missing field "url"')
+            if k == 'url':
+                if not validate_url(v):
+                    raise ValidationError('Invalid url. See {url}'.format(
+                        url='http://swagger.io/specification/#serverObject'))
+
+        if "url" not in server_object:
+            raise ValidationError('Invalid server object. Missing field "url"')
+    else:
+        raise ValidationError('Invalid server object. See {url}'.format(
+            url='http://swagger.io/specification/#serverObject'
+        ))
+
+
+def validate_url(url):
+    url_regex = re.compile(
+        r'^(?:http|ftp)s?://'  # http:// or https://
+        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'  # domain...
+        r'localhost|'  # localhost...
+        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'  # ...or ip
+        r'(?::\d+)?'  # optional port
+        r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+
+    return re.match(url_regex, url) is not None
+
+
+def validate_email(email):
+    email_regex = re.compile(
+        r"(^[-!#$%&'*+/=?^_`{}|~0-9A-Z]+(\.[-!#$%&'*+/=?^_`{}|~0-9A-Z]+)*"  # dot-atom
+        r'|^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-011\013\014\016-\177])*"'  # quoted-string
+        r')@(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?$', re.IGNORECASE)  # domain
+
+    return re.match(email_regex, email) is not None
 
 
 def validate_server_variables_object(server_variables_object):
