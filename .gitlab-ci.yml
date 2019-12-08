@@ -14,8 +14,9 @@ test:
   stage: test
   script:
     # - python setup.py test
-    - rename 's/$(python setup.py --version)/$(python setup.py --version)-dev/g' dist/*.tar.gz
-    - echo dist/*
+    - cd dist
+    - rename 's/$(python setup.py --version)/$(python setup.py --version)-dev/g' *.tar.gz
+    - echo *
 
 #deploy-staging:
 #  stage: deploy
