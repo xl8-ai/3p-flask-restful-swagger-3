@@ -25,8 +25,7 @@ deploy-staging:
   script:
     #- rename "s/$(python setup.py --version)/$(python setup.py --version).dev$CI_BUILD_ID/" dist/*.tar.gz
     #- twine upload --verbose dist/$(python setup.py --name)-$(python setup.py --version).dev$CI_BUILD_ID.tar.gz
-    #- twine upload --verbose dist/*
-    - echo dist/*
+    - twine upload --verbose dist/*
   only:
     - develop
     - master
