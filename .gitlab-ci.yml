@@ -24,7 +24,7 @@ deploy-staging:
     TWINE_REPOSITORY_URL: $TEST_PYPI_REPOSITORY_URL
   script:
     - rename "s/$(python setup.py --version)/$(python setup.py --version).dev$CI_BUILD_ID/" dist/*.tar.gz
-    - twine upload dist/*
+    - twine upload dist/$(python setup.py --name)-$(python setup.py --version).dev$CI_BUILD_ID.tar.gz
   only:
     - develop
     - master
