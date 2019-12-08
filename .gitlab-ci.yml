@@ -15,8 +15,7 @@ test:
   script:
     # - python setup.py test
     - cd dist
-    - rename 's/$(python setup.py --version)/$(python setup.py --version)-dev/g' *.tar.gz
-    - echo *
+    - rename -n "s/$(python setup.py --version)/$(python setup.py --version)-dev$CI_COMMIT_TAG/g" *.tar.gz
 
 #deploy-staging:
 #  stage: deploy
