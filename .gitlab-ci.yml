@@ -29,15 +29,15 @@ deploy-staging:
   only:
     - develop
     - master
-#
-#deploy-prod:
-#  stage: deploy
-#  when: manual
-#  variables:
-#    TWINE_USERNAME: $STAGING_USERNAME
-#    TWINE_PASSWORD: $STAGING_PASSWORD
-#  script:
-#    - twine upload dist/*
-#  only:
-#    - tags
+
+deploy-prod:
+  stage: deploy
+  when: manual
+  variables:
+    TWINE_USERNAME: $STAGING_USERNAME
+    TWINE_PASSWORD: $STAGING_PASSWORD
+  script:
+    - twine upload dist/*
+  only:
+    - tags
 
