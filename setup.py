@@ -1,4 +1,7 @@
+import os
 from setuptools import setup
+
+branch = os.getenv("CI_COMMIT_REF_NAME", None)
 
 
 def read(file_to_read):
@@ -6,8 +9,13 @@ def read(file_to_read):
         return f.read()
 
 
+version = '0.1'
+
+if branch == "develop" or branch == "master":
+    version += f".dev{os.getenv('CI_BUILD_ID', None)}"
+
 setup(name='flask-restful-swagger-3',
-      version='0.1',
+      version=version,
       url='https://gitlab.com/john-ull/framework/flask-restful-swagger-3',
       zip_safe=False,
       packages=['flask_restful_swagger_3'],
