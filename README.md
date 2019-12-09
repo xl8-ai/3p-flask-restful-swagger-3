@@ -29,7 +29,7 @@ app = Flask(__name__)
 
 # Use the swagger Api class as you would use the flask restful class.
 # It supports several (optional) parameters, these are the defaults:
-api = Api(app, api_version='0.0', api_spec_url='/api/swagger')
+api = Api(app, version='0.0', api_spec_url='/api/swagger')
 ```
 
 The Api class supports the following parameters:
@@ -37,8 +37,8 @@ The Api class supports the following parameters:
 | Parameter | Description |
 | --------- | ----------- |
 | `add_api_spec_resource` | Set to `True` to add an endpoint to serve the swagger specification (defaults to `True`). |
-| `api_version` | The API version string (defaults to '0.0'). Maps to the `version` field of the [info object](http://swagger.io/specification/#infoObject). |
-| `api_spec_base` | Instead of specifying individual swagger fields, you can pass in a minimal [schema object](http://swagger.io/specification/#schemaObject) to use as a template. Note that parameters specified explicity will overwrite the values in this template. |
+| `version` | The API version string (defaults to '0.0'). Maps to the `version` field of the [info object](http://swagger.io/specification/#infoObject). |
+| `api_spec_base` | Instead of specifying individual swagger fields, you can pass in a minimal [OpenAPI Object](http://swagger.io/specification/#openapiObject) to use as a template. Note that parameters specified explicity will overwrite the values in this template. |
 | `api_spec_url` | The URL path that serves the swagger specification document (defaults to `/api/swagger`). The path is appended with `.json` and `.html` (i.e. `/api/swagger.json` and `/api/swagger.html`). |
 | `servers` | The server on which the API is served, it replaces `schemes`, `host` and `base_path` [server object](http://swagger.io/specification/#serverObject). |
 | `schemas`| The Schema Object allows the definition of input and output data types. Maps to the [`schema`](http://swagger.io/specification/#schemaObject) |
@@ -49,9 +49,9 @@ The Api class supports the following parameters:
 | `license` | The license information for the API. Maps to the `license` field of the [info object](http://swagger.io/specification/#infoObject). |
 | `parameters` | The parameters that can be used across operations. Maps to the `parameters` field of the [operation object](http://swagger.io/specification/#operationObject). |
 | `responses` | The responses that can be used across operations. Maps to the `responses` field of the [operation object](http://swagger.io/specification/#operationObject). |
-| `security` | The security schemes for the API as a whole. Maps to the `security` field of the [schema object](http://swagger.io/specification/#schemaObject). |
+| `security` | A declaration of which security mechanisms can be used across the API. The list of values includes alternative security requirement objects that can be used. Only one of the security requirement objects need to be satisfied to authorize a request. Individual operations can override this definition. Maps to the `security` field of the [OpenAPI Object](http://swagger.io/specification/#openapiObject). |
 | `securitySchemes` | The security schemes for the API. Maps to the `securitySchemes` field of the [component object](http://swagger.io/specification/#componentsObject). |
-| `tags` | A list of tags used by the specification with additional metadata. Maps to the `tags` field fo the [schema object](http://swagger.io/specification/#schemaObject). |
+| `tags` | A list of tags used by the specification with additional metadata. Maps to the `tags` field fo the [OpenAPI Object](http://swagger.io/specification/#openapiObject). |
 | `terms` | The terms of service for the API. Maps to the `termsOfService` field of the [info object](http://swagger.io/specification/#infoObject). |
 | `title` | The title of the application (defaults to the flask app module name). Maps to the `title` field of the [info object](http://swagger.io/specification/#infoObject). |
 
@@ -187,7 +187,9 @@ class GroupResource(Resource):
     def post(self):
     ...
 ```
+
 Swagger schema (among other things):
+
 ```json
 {"GroupsModel": {
     "properties": {
@@ -313,7 +315,7 @@ Refer to the files in the `example` folder for the complete code.
 
 To run the example project in the `example` folder:
 
-```
+```shell script
 pip install flask-restful-swagger-3
 pip install flask-cors    # needed to access spec from swagger-ui
 python app.py
@@ -321,7 +323,7 @@ python app.py
 
 To run the example which uses Flask Blueprints:
 
-```
+```shell script
 python app_blueprint.py
 ```
 
@@ -331,6 +333,7 @@ to explore your api. Try it online at [http://petstore.swagger.io/](http://petst
 
 To run tests:
 
-```
-python setup.py test
+```shell script
+pip install tox # needed to run pytest
+tox
 ```
