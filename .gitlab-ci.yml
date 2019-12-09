@@ -6,14 +6,14 @@ stages:
 
 before_script:
   - python3 -m pip install --upgrade pip
-  - pip install setuptools wheel twine
+  - pip install setuptools wheel twine tox
   - python setup.py sdist
 
 
 test:
   stage: test
   script:
-    - python setup.py test
+    - tox
 
 deploy-staging:
   stage: deploy
