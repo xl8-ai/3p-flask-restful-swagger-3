@@ -28,7 +28,5 @@ setup(name='flask-restful-swagger-3',
       author='Jonathan ULLINDAH',
       license='MIT',
       long_description=read('README.rst'),
-      install_requires=['Flask-RESTful>=0.3.7'],
-      tests_require=['nose'],
-      test_suite='nose.collector'
+      install_requires=['Flask-RESTful>=0.3.7']
       )
