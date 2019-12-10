@@ -37,7 +37,7 @@ deploy-prod:
     TWINE_USERNAME: $PROD_USERNAME
     TWINE_PASSWORD: $PROD_PASSWORD
   script:
-    - twine upload dist/*
+    - twine upload --verbose dist/*
   only:
     - tags
 
