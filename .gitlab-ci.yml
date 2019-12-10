@@ -34,8 +34,8 @@ deploy-prod:
   stage: deploy
   when: manual
   variables:
-    TWINE_USERNAME: $STAGING_USERNAME
-    TWINE_PASSWORD: $STAGING_PASSWORD
+    TWINE_USERNAME: $PROD_USERNAME
+    TWINE_PASSWORD: $PROD_PASSWORD
   script:
     - twine upload dist/*
   only:
