@@ -36,7 +36,7 @@ deploy-prod:
   variables:
     TWINE_USERNAME: $PROD_USERNAME
     TWINE_PASSWORD: $PROD_PASSWORD
-    TWINE_REPOSITORY_URL: $TEST_PYPI_REPOSITORY_URL
+    # TWINE_REPOSITORY_URL: $TEST_PYPI_REPOSITORY_URL
   script:
     - twine upload --verbose dist/*
   only:
