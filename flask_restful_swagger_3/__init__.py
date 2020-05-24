@@ -114,9 +114,11 @@ class Api(restful_Api):
                     operation, schemas_ = Extractor.extract(operation)
                     path_item[method] = operation
                     schemas.update(schemas_)
-                    summary = parse_method_doc(f, operation)
+                    summary, note = parse_method_doc(f, operation)
                     if summary:
                         operation['summary'] = summary
+                    if note:
+                        operation['description'] = note
 
         validate_components_object(schemas)
 
@@ -279,7 +281,7 @@ class _RequestParserExtractorImpl(_BaseExtractorImpl):
             return type_.swagger_type
         elif callable(type_) and type_.__name__ == 'boolean':  # flask-restful boolean
             return 'boolean'
-        elif issubclass(type_, str):
+        elif callable(type_) or issubclass(type_, str):
             return 'string'
         elif type_ == float:
             return 'number'
@@ -333,6 +335,7 @@ class _RequestParserExtractorImpl(_BaseExtractorImpl):
         _NewModel.__name__ = kwargs['model_name']
         _NewModel.type = 'object'
         _NewModel.properties = kwargs['properties']
+        _NewModel.required = kwargs['required']
         return _NewModel
 
     @classmethod

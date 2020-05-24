@@ -364,7 +364,7 @@ def validate_parameter_object(parameter_object):
     for k, v in parameter_object.items():
         if k not in ['name', 'in', 'description', 'required', 'deprecated', 'allowEmptyValue', 'style', 'explode',
                      'allowReserved', 'schema', 'example', 'examples', 'content', 'matrix', 'label', 'form',
-                     'simple', 'spaceDelimited', 'pipeDelimited', 'deepObject', 'reqparser']:
+                     'simple', 'spaceDelimited', 'type', 'pipeDelimited', 'deepObject', 'reqparser']:
             raise ValidationError('Invalid parameter object. Unknown field "{field}". See {url}'.format(
                     field=k,
                     url='http://swagger.io/specification/#parameterObject'))
@@ -619,9 +619,11 @@ def parse_method_doc(method, operation):
     Parse documentation from a resource method.
     :param method: The resource method
     :param operation: The operation document
-    :return: The operation summary
+    :return: The operation summary and the note
     """
     summary = None
+    note = None
+    note_lines = []
 
     full_doc = inspect.getdoc(method)
     if full_doc:
@@ -630,8 +632,14 @@ def parse_method_doc(method, operation):
             # Append the first line of the docstring to any summary specified
             # in the operation document
             summary = sanitize_doc([operation.get('summary', None), lines[0]])
+            for line in lines[2:]:
+                if line.startswith("---"):
+                    break
+                note_lines.append(line)
+            if note_lines:
+                note = "\n".join(note_lines)
 
-    return summary
+    return summary, note
 
 
 def parse_schema_doc(cls, definition):
