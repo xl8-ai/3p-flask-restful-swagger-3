@@ -14,7 +14,7 @@ version = '0.1'
 if branch == "develop" or branch == "master":
     version += f".dev{os.getenv('CI_BUILD_ID', None)}"
 
-setup(name='flask-restful-swagger-3',
+setup(name='3p-flask-restful-swagger-3',
       version=version,
       url='https://gitlab.com/john-ull/framework/flask-restful-swagger-3',
       zip_safe=False,
